@@ -1,0 +1,46 @@
+body {
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  tab-size: 4;
+  -moz-tab-size: 4;
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+.mono16 {
+	display: inline-block;
+	width: 16em;
+}
+.mono32 {
+	display: inline-block;
+	width: 32em;
+}
+
+.bg-firstblood {
+	background-color: DarkGreen;
+	color: #eee;
+	text-align: center;
+}
+
+.bg-accepted {
+	background-color: #dff0d8;
+	text-align: center;
+}
+
+.bg-rejected {
+	background-color: #f2dede;
+	text-align: center;
+}
+
+.bg-unknown {
+	background-color: #fcf8e3;
+	text-align: center;
+}
+
+p.mkcent {
+	text-align: center;
+}
+th.mkcent {
+	text-align: center;
+}
