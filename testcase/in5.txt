@@ -1,0 +1,7 @@
+(define 33g (lambda (x1 x2 x3 x4) ((lambda (x1 x2) ((lambda (x1 x2 x3) (+ x4 (+ x1 ((lambda (x4 x1) (+ (* x4 x3) (* x1 x1))) x2 x3)))) x2 x3 0alpha)) x1 x3)))
+(define 0alpha 666)
+(33g 1 2 3 4)
+(33g 2 4 6 8)
+(33g 0 0 0 0)
+(define 666kk (lambda (x1) (lambda (x2 x3) (+ x1 (+ x2 x3)))))
+((666kk 10) 20 30)

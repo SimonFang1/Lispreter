@@ -2,7 +2,6 @@
 // list  -> (items)
 // items -> item <space> items | item
 // item  -> identifier | list
-#include <cstdio>
 #include <cctype>
 #include <iostream>
 #include <string>
@@ -33,7 +32,7 @@ struct List {
     E_List,
     E_Number,
     E_Logic,
-    E_CallFun
+    E_LambdaArg
   } type;
   string name;
   union {
@@ -103,14 +102,11 @@ class IdHashMap {
     }
     return nullptr;
   }
-  inline bool EvalLmda() {
-    return _id.size() > 1;
-  }
 };
 
 class Lisp {
   IdHashMap _ids; // identifiers
-  // shared_ptr<List> global, def_entry;
+  shared_ptr<List> _lmd_arg;
   unsigned _pos;
   bool ParseToken(shared_ptr<Token> &token) {
     while (_pos < in.size() && isspace(in[_pos])) {
@@ -223,6 +219,8 @@ class Lisp {
     return local_root;
   }
   void Init() {
+    _lmd_arg = make_shared<List>();
+    _lmd_arg->type = List::E_LambdaArg;
     auto def = make_shared<List>();
     def->type = List::E_BiFunc;
     def->name = "+";
@@ -262,7 +260,10 @@ class Lisp {
 
   inline void Preserve(shared_ptr<List> list) {
     if (list->type == List::E_Identifier) {
-      list->identifier_target = _ids.Get(list->name);
+      auto val = _ids.Get(list->name);
+      if (val != nullptr && val->type != List::E_LambdaArg) {
+        list->identifier_target = val;
+      }
     }
   }
 
@@ -278,7 +279,15 @@ class Lisp {
       return;
     }
     if (list->type == List::E_Lambda) {
+      _ids.AddTemp();
+      auto x = list->right->right;
+      auto para = list->left;
+      while (x != nullptr) {
+        _ids.Put(x->name, _lmd_arg);
+        x = x->left;
+      }
       TraverseLambda(list);
+      _ids.RemoveTemp();
       return;
     }
     Preserve(list);
@@ -349,9 +358,9 @@ class Lisp {
       _ids.AddTemp();
       auto x = list->right->right;
       auto para = _ids.Get(x->name);
-      if (para == nullptr) {
+      if (list->left == nullptr || para->type == List::E_LambdaArg) {
         while (x != nullptr) {
-          _ids.Put(x->name, nullptr);
+          _ids.Put(x->name, _lmd_arg);
           x = x->left;
         }
         TraverseLambda(list);
